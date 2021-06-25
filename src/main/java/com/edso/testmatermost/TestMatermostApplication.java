@@ -14,26 +14,25 @@ import java.io.*;
 @Slf4j
 public class TestMatermostApplication {
 
-    private static int numInstance = 0;
-    private static int numThread = 50;
-
-    public static void main(String[] args) throws IOException{
+    public static void main(String[] args) throws IOException {
 
         SpringApplication.run(TestMatermostApplication.class, args);
         try {
-            numInstance = Integer.parseInt(args[0]);
-            numThread = Integer.parseInt(args[1]);
+            AppState.numInstance = Integer.parseInt(args[0]);
+            AppState.numThread = Integer.parseInt(args[1]);
         } catch (Exception e) {
-            log.info("Dau vao khong hop le. mac dinh day la may: " + numInstance + ", so thread la "+ numThread);
+            log.info("Dau vao khong hop le. mac dinh day la may: " + AppState.numInstance + ", so thread la " + AppState.numThread);
         }
-		AppState.loadUserData();
+        AppState.loadUserData();
         AppState.fileLogger = new BufferedWriter(new FileWriter("log.csv"));
         createReceiver();
-		createSender();
+        createSender();
     }
 
     static void createReceiver() throws IOException {
-        for (int i = numInstance * numThread; i < Math.min(numThread + numInstance * numThread, AppState.MAX_USERS); i++) {
+        int startUser = AppState.numInstance * AppState.numThread;
+        int endUser = Math.min(AppState.numThread + startUser, AppState.MAX_USERS);
+        for (int i = startUser; i < endUser; i++) {
             User user = AppState.users.get(i);
             MessageReceiver messageReceiver = new MessageReceiver(user);
             Thread thread = new Thread(messageReceiver);
@@ -47,8 +46,9 @@ public class TestMatermostApplication {
     }
 
     static void createSender() {
-
-        for (int i = numInstance * numThread; i < Math.min(numThread + numInstance * numThread, AppState.MAX_USERS); i++) {
+        int startUser = AppState.numInstance * AppState.numThread;
+        int endUser = Math.min(AppState.numThread + startUser, AppState.MAX_USERS);
+        for (int i = startUser; i < endUser; i++) {
             MessageSender sender = new MessageSender(AppState.users.get(i));
             log.info("Create thread user: " + AppState.users.get(i).getEmail());
             Thread thread = new Thread(sender);

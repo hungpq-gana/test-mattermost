@@ -17,10 +17,10 @@ public class MessageSender implements Runnable {
         UserClient userClient = new UserClient();
         String token = userClient.login(user);
         while (AppState.isSendMessage) {
-            int randNum = (int) (Math.random() * 1000);
+            int randNum = (int) (Math.random() * AppState.MAX_USERS);
             User receiveUser = AppState.users.get(randNum);
             String channelID = userClient.createChannel(token, user.getUid(), receiveUser.getUid());
-            String message = createMessage(user);
+            String message = createMessage();
             long sendTime = System.currentTimeMillis();
             log.info("Send message " + Thread.currentThread().getName() + " at: " + System.currentTimeMillis());
             userClient.sendMessage(token, channelID, message);
@@ -34,9 +34,9 @@ public class MessageSender implements Runnable {
         }
     }
 
-    private String createMessage(User user1) {
+    private String createMessage() {
         StringBuilder message = new StringBuilder();
-        message.append(user1.getUid()).append("_").append(AppState.messageId++).append(",");
+        message.append(user.getUid()).append("_").append(AppState.messageId++).append(",");
         int messageLength = (int) (Math.random() * 100 + 5);
         for (int i = 0; i < messageLength; i++) {
             int charId = (int) (Math.random() * 60 + 65);

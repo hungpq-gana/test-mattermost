@@ -15,7 +15,6 @@ import java.util.*;
 public class UserClient {
 
     private final String hostHttp = "http://192.168.50.33:8065/";
-    private final String hostWs = "ws://192.168.50.33:8065/";
     private final RestTemplate rest = new RestTemplate();
 
     public String login(User user){
